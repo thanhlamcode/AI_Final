@@ -1,8 +1,6 @@
 import random
 from tkinter import Tk, Label, Entry, Button, Text, messagebox, Spinbox, Canvas, Frame, Scrollbar, StringVar
 
-# 3. Áp dụng thuật toán Hill Climbing vào bài toán cái túi
-
 # Hàm giải bài toán cái túi bằng phương pháp Hill Climbing
 def hill_climbing_knapsack(weights, values, capacity):
     n = len(weights)
@@ -17,7 +15,9 @@ def hill_climbing_knapsack(weights, values, capacity):
         
         # Tạo danh sách các giải pháp hàng xóm
         neighbors = generate_neighbors(current_solution)
-        improved = False
+        best_neighbor = current_solution
+        best_value = current_value
+        best_weight = current_weight
         
         # Duyệt qua các hàng xóm và chọn hàng xóm tốt nhất
         for neighbor in neighbors:
@@ -25,16 +25,19 @@ def hill_climbing_knapsack(weights, values, capacity):
             print(f"  Hàng xóm: {neighbor}, Giá trị: {neighbor_value}, Trọng lượng: {neighbor_weight}")
             
             # Cập nhật nếu có hàng xóm tốt hơn
-            if neighbor_weight <= capacity and neighbor_value > current_value:
-                current_solution = neighbor
-                current_value = neighbor_value
-                current_weight = neighbor_weight
-                improved = True
-                break
+            if neighbor_weight <= capacity and neighbor_value > best_value:
+                best_neighbor = neighbor
+                best_value = neighbor_value
+                best_weight = neighbor_weight
         
         # Dừng nếu không có cải thiện
-        if not improved:
+        if best_value == current_value:
             break
+        
+        # Cập nhật giải pháp hiện tại thành hàng xóm tốt nhất
+        current_solution = best_neighbor
+        current_value = best_value
+        current_weight = best_weight
         step += 1
 
     # Chọn các đồ vật trong giải pháp tốt nhất
@@ -47,7 +50,7 @@ def calculate_solution(weights, values, solution, capacity):
     total_weight = sum(weights[i] for i in range(len(solution)) if solution[i] == 1)
     return total_value, total_weight
 
-# Hàm tạo các láng giềng của một giải pháp
+# Hàm tạo các hàng xóm của một giải pháp
 def generate_neighbors(solution):
     neighbors = []
     for i in range(len(solution)):
