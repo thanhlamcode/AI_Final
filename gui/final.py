@@ -5,6 +5,10 @@ from tkinter import Tk, Label, Entry, Button, Text, messagebox, Spinbox, Canvas,
 def hill_climbing_knapsack(weights, values, capacity):
     n = len(weights)
     
+    # Kiểm tra nếu tất cả các trọng lượng đều lớn hơn sức chứa balo
+    if all(weight > capacity for weight in weights):
+        return 0, []  # Trả về giá trị tối đa là 0 và không chọn đồ vật nào
+    
     # Khởi tạo giải pháp ngẫu nhiên
     current_solution = [random.choice([0, 1]) for _ in range(n)]
     current_value, current_weight = calculate_solution(weights, values, current_solution, capacity)
