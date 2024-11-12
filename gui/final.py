@@ -1,58 +1,56 @@
 import random
 from tkinter import Tk, Label, Entry, Button, Text, messagebox, Spinbox, Canvas, Frame, Scrollbar, StringVar
 
-# 3. Áp dụng thuật toán Hill Climbing vào bài toán cái túi
-
-# 3.1. Khởi tạo Knapsack Problem
 # Hàm giải bài toán cái túi bằng phương pháp Hill Climbing
 def hill_climbing_knapsack(weights, values, capacity):
     n = len(weights)
     
-    # 3.2. Khởi tạo giải pháp ngẫu nhiên
-    # Tạo giải pháp hiện tại bằng cách chọn ngẫu nhiên các đồ vật
+    # Khởi tạo giải pháp ngẫu nhiên
     current_solution = [random.choice([0, 1]) for _ in range(n)]
     current_value, current_weight = calculate_solution(weights, values, current_solution, capacity)
     
-    # 3.6. Tạo thuật toán Hill Climbing
     step = 0  # Biến đếm số bước
     while True:
         print(f"\nBước {step}: Giải pháp hiện tại: {current_solution}, Giá trị: {current_value}, Trọng lượng: {current_weight}")
         
-        # 3.4. Tạo function khởi tạo tất cả các giải pháp hàng xóm
-        # Tạo danh sách các giải pháp láng giềng
+        # Tạo danh sách các giải pháp hàng xóm
         neighbors = generate_neighbors(current_solution)
-        improved = False
+        best_neighbor = current_solution
+        best_value = current_value
+        best_weight = current_weight
         
-        # 3.5. Tạo function tìm hàng xóm tốt nhất và giải pháp tối ưu
-        # Duyệt qua các láng giềng và chọn láng giềng tốt nhất
+        # Duyệt qua các hàng xóm và chọn hàng xóm tốt nhất
         for neighbor in neighbors:
             neighbor_value, neighbor_weight = calculate_solution(weights, values, neighbor, capacity)
             print(f"  Hàng xóm: {neighbor}, Giá trị: {neighbor_value}, Trọng lượng: {neighbor_weight}")
-            # Cập nhật nếu có láng giềng tốt hơn
-            if neighbor_weight <= capacity and neighbor_value > current_value:
-                current_solution = neighbor
-                current_value = neighbor_value
-                current_weight = neighbor_weight
-                improved = True
-                break
+            
+            # Cập nhật nếu có hàng xóm tốt hơn
+            if neighbor_weight <= capacity and neighbor_value > best_value:
+                best_neighbor = neighbor
+                best_value = neighbor_value
+                best_weight = neighbor_weight
+        
         # Dừng nếu không có cải thiện
-        if not improved:
+        if best_value == current_value:
             break
+        
+        # Cập nhật giải pháp hiện tại thành hàng xóm tốt nhất
+        current_solution = best_neighbor
+        current_value = best_value
+        current_weight = best_weight
         step += 1
 
     # Chọn các đồ vật trong giải pháp tốt nhất
     selected_items = [(weights[i], values[i]) for i in range(n) if current_solution[i] == 1]
     return current_value, selected_items
 
-# 3.3. Tạo hàm tính giá trị và trọng lượng của túi
 # Hàm tính tổng giá trị và trọng lượng của một giải pháp
 def calculate_solution(weights, values, solution, capacity):
     total_value = sum(values[i] for i in range(len(solution)) if solution[i] == 1)
     total_weight = sum(weights[i] for i in range(len(solution)) if solution[i] == 1)
     return total_value, total_weight
 
-# 3.4. Tạo function khởi tạo tất cả các giải pháp hàng xóm
-# Hàm tạo các láng giềng của một giải pháp
+# Hàm tạo các hàng xóm của một giải pháp
 def generate_neighbors(solution):
     neighbors = []
     for i in range(len(solution)):
