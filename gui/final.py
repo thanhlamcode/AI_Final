@@ -1,6 +1,9 @@
 import random
 from tkinter import Tk, Label, Entry, Button, Text, messagebox, Spinbox, Canvas, Frame, Scrollbar, StringVar
 
+# Đặt hạt ngẫu nhiên cố định
+random.seed(42)
+
 # Hàm giải bài toán cái túi bằng phương pháp Hill Climbing
 def hill_climbing_knapsack(weights, values, capacity):
     n = len(weights)
@@ -9,8 +12,8 @@ def hill_climbing_knapsack(weights, values, capacity):
     if all(weight > capacity for weight in weights):
         return 0, []  # Trả về giá trị tối đa là 0 và không chọn đồ vật nào
     
-    # Khởi tạo giải pháp ngẫu nhiên
-    current_solution = [random.choice([0, 1]) for _ in range(n)]
+    # Khởi tạo giải pháp ban đầu (không ngẫu nhiên)
+    current_solution = [0] * n  # Bắt đầu từ giải pháp không chọn vật phẩm nào
     current_value, current_weight = calculate_solution(weights, values, current_solution, capacity)
     
     step = 0  # Biến đếm số bước
