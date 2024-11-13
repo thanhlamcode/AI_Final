@@ -8,20 +8,16 @@ random.seed(42)
 def hill_climbing_knapsack(weights, values, capacity):
     n = len(weights)
     
-    # Kiểm tra nếu tất cả các trọng lượng đều lớn hơn sức chứa balo
-    if all(weight > capacity for weight in weights):
-        return 0, []  # Trả về giá trị tối đa là 0 và không chọn đồ vật nào
-    
-    # Khởi tạo giải pháp ban đầu (không ngẫu nhiên)
-    current_solution = [0] * n  # Bắt đầu từ giải pháp không chọn vật phẩm nào
+    # Khởi tạo giải pháp ban đầu với cách chọn ngẫu nhiên một số vật phẩm
+    current_solution = [random.choice([0, 1]) for _ in range(n)]
     current_value, current_weight = calculate_solution(weights, values, current_solution, capacity)
     
     step = 0  # Biến đếm số bước
     while True:
         print(f"\nBước {step}: Giải pháp hiện tại: {current_solution}, Giá trị: {current_value}, Trọng lượng: {current_weight}")
         
-        # Tạo danh sách các giải pháp hàng xóm
-        neighbors = generate_neighbors(current_solution)
+        # Tạo danh sách các giải pháp hàng xóm mở rộng
+        neighbors = generate_complex_neighbors(current_solution)
         best_neighbor = current_solution
         best_value = current_value
         best_weight = current_weight
@@ -57,13 +53,33 @@ def calculate_solution(weights, values, solution, capacity):
     total_weight = sum(weights[i] for i in range(len(solution)) if solution[i] == 1)
     return total_value, total_weight
 
-# Hàm tạo các hàng xóm của một giải pháp
-def generate_neighbors(solution):
+# Hàm tạo các hàng xóm phức tạp của một giải pháp
+def generate_complex_neighbors(solution):
     neighbors = []
-    for i in range(len(solution)):
+    n = len(solution)
+    
+    # Tạo hàng xóm bằng cách lật một bit
+    for i in range(n):
         neighbor = solution[:]
-        neighbor[i] = 1 - neighbor[i]  # Lật giá trị của phần tử tại vị trí i
+        neighbor[i] = 1 - neighbor[i]
         neighbors.append(neighbor)
+    
+    # Tạo hàng xóm bằng cách lật hai bit
+    for i in range(n):
+        for j in range(i + 1, n):
+            neighbor = solution[:]
+            neighbor[i] = 1 - neighbor[i]
+            neighbor[j] = 1 - neighbor[j]
+            neighbors.append(neighbor)
+    
+    # Tạo hàng xóm bằng cách thêm ngẫu nhiên một số vật phẩm vào giỏ (giữ nguyên một số lựa chọn hiện tại)
+    for _ in range(3):  # Tạo 3 hàng xóm với tổ hợp ngẫu nhiên
+        neighbor = solution[:]
+        indices = random.sample(range(n), k=random.randint(1, n))
+        for index in indices:
+            neighbor[index] = 1 - neighbor[index]
+        neighbors.append(neighbor)
+    
     return neighbors
 
 # Hàm tính toán và hiển thị kết quả
