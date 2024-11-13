@@ -27,6 +27,7 @@ def hill_climbing_knapsack(weights, values, capacity, num_restarts=20):
 
 
         while True:
+            print(f"\nBước {step}: Giải pháp hiện tại: {current_solution}, Giá trị: {current_value}, Trọng lượng: {current_weight}")
             neighbors = generate_neighbors(current_solution)
             best_neighbor = current_solution
             best_value = current_value
@@ -37,6 +38,7 @@ def hill_climbing_knapsack(weights, values, capacity, num_restarts=20):
 
             for neighbor in neighbors:
                 neighbor_value, neighbor_weight = calculate_solution(weights, values, neighbor, capacity)
+                print(f"  Hàng xóm: {neighbor}, Giá trị: {neighbor_value}, Trọng lượng: {neighbor_weight}")
 
 
                 if neighbor_weight <= capacity and neighbor_value > best_value:
